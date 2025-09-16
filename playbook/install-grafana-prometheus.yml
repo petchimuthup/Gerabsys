@@ -1,0 +1,100 @@
+---
+ - name: install grafana and prometheus
+   hosts: ansmgdnode01
+   tasks:
+
+    - name: grafana gpgkey download
+      get_url:
+       url: https://rpm.grafana.com/gpg.key
+       dest: /home/opc
+   # - name: import gpg key
+   #   shell: rpm --import gpg.key
+    - name: create grafana repo
+      yum_repository:
+       name: grafana
+       baseurl: https://rpm.grafana.com
+       description: grafana-repo
+       repo_gpgcheck: 1
+       enabled: 1
+       gpgcheck: 1
+       gpgkey: https://rpm.grafana.com/gpg.key
+       sslverify: 1
+       sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    - name: install grafana
+      yum:
+       name: grafana-enterprise
+       state: latest
+
+    - name: start grafana-server service
+      systemd:
+       name: grafana-server
+       enabled: yes
+       state: started
+    - name: download prometheus
+      get_url:
+       url: https://github.com/prometheus/prometheus/releases/download/v3.5.0/prometheus-3.5.0.linux-amd64.tar.gz
+       dest: /root
+    - name: extract tar file
+      unarchive:
+       src: /root/prometheus-3.5.0.linux-amd64.tar.gz
+       dest: /usr/local/bin
+       remote_src: yes
+    - name: Rename prometheus-3.5.0.linux-amd64 folder
+      shell: mv /usr/local/bin/prometheus-3.5.0.linux-amd64 /usr/local/bin/prometheus
+      ignore_errors: yes
+
+    - name: create systemd service file
+      copy:
+       dest: /etc/systemd/system/prometheus.service
+       content: |
+        [Unit]
+        Description=Prometheus Service
+        After=network.target
+
+        [Service]
+        User=root
+        Group=root
+        Type=simple  
+        ExecStart=/usr/local/bin/prometheus/prometheus --config.file=/usr/local/bin/prometheus/prometheus.yml
+        [Install]
+        WantedBy=multi-user.target 
+      notify:
+        - Reload systemd
+    - name: enable and restart prometheus service
+      systemd:
+       name: prometheus
+       state: started
+       enabled: yes
+
+    - name: adding SMTP in /etc/grafana/grafana.ini
+      blockinfile:
+       backup: true
+       dest: /etc/grafana/grafana.ini
+       marker: "# {mark} ANSIBLE Grafana-SMTP Block"
+       state: present
+       block: |
+        #SMTP Config
+        #################################### SMTP / Emailing ##########################
+        [smtp]
+        enabled = true
+        host = smtp.gmail.com:465
+        user = zabbixtest550@gmail.com
+        # If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
+        password = "Greenw0rld76"
+        ;cert_file =
+        ;key_file =
+        skip_verify = true
+        from_address = zabbixtest550@gmail.com
+        from_name = Grafana
+        # EHLO identity in SMTP dialog (defaults to instance_name)
+        ;ehlo_identity = dashboard.example.com
+        # SMTP startTLS policy (defaults to 'OpportunisticStartTLS')
+        startTLS_policy = OpportunisticStartTLS
+        # Enable trace propagation in e-mail headers, using the 'traceparent', 'tracestate' and (optionally)'baggage' fields (defaults to false)
+        ;enable_tracing = false
+      notify: restart grafana service
+   handlers:
+    - name: restart grafana service
+      command: systemctl restart grafana-server 
+    - name: Reload systemd
+      command: systemctl daemon-reload

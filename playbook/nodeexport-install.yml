@@ -1,0 +1,41 @@
+---
+ - name: install node exporter
+   hosts: olm-server
+   tasks:
+    - name: install node exporter
+      get_url:
+       url: https://github.com/prometheus/node_exporter/releases/download/v1.9.1/node_exporter-1.9.1.linux-amd64.tar.gz
+       dest: /root
+    - name: extract tar file
+      unarchive:
+       src: /root/node_exporter-1.9.1.linux-amd64.tar.gz
+       dest: /usr/local/bin
+       remote_src: yes
+    - name: rename node_exporter folder
+      shell: mv /usr/local/bin/node_exporter-1.9.1.linux-amd64 /usr/local/bin/node_exporter && chown -R root:root /usr/local/bin/node_exporter
+    - name: create systemd service file
+      copy: 
+       dest: /etc/systemd/system/node-exporter.service
+       content: |
+        [Unit]
+        Description=Node Exporter
+        After=network.target
+
+        [Service]
+        User=root
+        Group=root
+        Type=simple
+        ExecStart=/usr/local/bin/node_exporter/node_exporter --collector.systemd
+        [Install]
+        WantedBy=multi-user.target 
+      notify: reload systemd
+    - name: enable and restart node exporter service
+      systemd:
+       name: node-exporter
+       enabled: yes
+       state: restarted
+   handlers:
+    - name: reload systemd
+      command: systemctl daemon-reload
+    
+

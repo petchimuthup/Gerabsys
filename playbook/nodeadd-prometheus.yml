@@ -1,0 +1,28 @@
+---
+- name: Configure Prometheus with node_exporter job
+  hosts: ansmgdnode01
+
+  vars:
+    prometheus_config: "/usr/local/bin/prometheus/prometheus.yml"
+    node_targets:
+      - "192.168.220.62:9100"
+      - "192.168.220.58:9100"
+#      - "192.168.1.12:9100"
+#      - "192.168.1.13:9100"
+
+  tasks:
+    - name: Deploy Prometheus configuration with node_exporter job
+      template:
+        src: prometheus.yml.j2
+        dest: "{{ prometheus_config }}"
+        #owner: prometheus
+        #group: prometheus
+        #mode: '0644'
+      notify: Restart Prometheus
+
+  handlers:
+    - name: Restart Prometheus
+      systemd:
+        name: prometheus
+        state: restarted
+
