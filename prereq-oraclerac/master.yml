@@ -1,0 +1,14 @@
+---
+ - name: oracle rac prerequisite
+   hosts: rac_nodes
+   vars_files: 
+    - ../vars/psgroups.yml
+    - ../vars/racdbpackages.yml
+    - ../vars/filesystems.yml
+
+   tasks:
+    - import_tasks: /root/ansible/prereq-oraclerac/useraccount.yml
+    - import_tasks: /root/ansible/prereq-oraclerac/packages.yml
+    - import_tasks: /root/ansible/prereq-oraclerac/lvcreate-fs-mount.yml
+
+

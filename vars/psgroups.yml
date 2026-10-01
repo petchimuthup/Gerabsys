@@ -1,0 +1,19 @@
+oraclegroups:
+ - oinstall
+ - asmadmin
+ - asmdba
+
+users:
+  - name: oracrs
+    group: oinstall
+    groups: asmadmin,asmdba
+  - name: oradb
+    group: oinstall
+    groups: asmadmin,asmdba
+#  - name: gcagent
+#    group: oinstall
+
+passwords:
+ oracrs: $6$FdUTIjhiDZsTJ0YO$j1Ns/Un5ns1AT97oIlih23dRJVcElgnpuv41DoZ.YWGbJ0hrQiAHWuy1hGdPNb85xSMit4GAi6C7AcWATq9ZK0
+ oradb: $6$FdUTIjhiDZsTJ0YO$j1Ns/Un5ns1AT97oIlih23dRJVcElgnpuv41DoZ.YWGbJ0hrQiAHWuy1hGdPNb85xSMit4GAi6C7AcWATq9ZK0
+# gcagent: $6$fs8Osz5k8D/gPTKL$z8/N33wG7kbXR7VZVpVuS3yrpBUupRMztFwmuNvP/sirLMXBmCvAUXXpYks5i2WCVuHrbVIrfHIABZS.lJgvl.

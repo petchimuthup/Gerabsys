@@ -1,0 +1,75 @@
+    - name: create thin lv volumes
+      lvol:
+       vg: "{{ item.vg }}"
+       lv: "{{ item.lv }}"
+       #thinpool: "{{ item.thinpool }}"
+       size: "{{ item.size }}"
+       state: present
+      loop: "{{ lvm_mounts }}"
+      loop_control:
+       label: "{{ item.name }}"
+
+
+    - name: create filesystem
+      filesystem:
+       fstype: "{{ item.fstype }}"
+       dev: "{{ item.fsdev }}"
+      loop: "{{ lvm_mounts }}"
+      loop_control:
+       label: "{{ item.name }}"
+
+    - name: create mountpoint directory
+      file:
+       path: "{{ item.path }}"
+       state: directory
+      loop: "{{ lvm_mounts }}"
+      loop_control:
+       label: "{{ item.name }}"
+
+#    - name: create NFS mountpoint directory
+#      file:
+#       path: "{{ item.path }}"
+#       state: directory
+#      loop: "{{ nfsmount }}"
+
+
+    - name: mount filesystems
+      mount:
+       path: "{{ item.path }}"
+       src: "{{ item.fsdev }}"
+       fstype: "{{ item.fstype }}"
+       state: mounted
+      loop: "{{ lvm_mounts }} "
+      loop_control:
+       label: "{{ item.name }}"
+
+    - name: directory permission change 
+      file:
+       path: "{{ item.path }}"
+       state: directory
+       owner: "{{ item.owner }}"
+       group: "{{ item.group }}"
+       mode: "{{ item.mode }}"
+      loop: "{{ lvm_mounts }}"
+      loop_control: 
+       label: "{{ item.name }}"
+    
+#    - name: remount with exec tmp and var filesystem
+#      ansible.builtin.command:
+#       cmd: "mount -o remount,exec {{ item }}"
+#      loop:
+#       - /tmp
+#       - /var
+#
+#    - name: mount NFS filesystem
+#      mount:
+#       path: "{{ item.path }}"
+#       src: "{{ item.src }}"
+#       fstype: "{{ item.fstype }}"
+#       state: mounted
+#      loop: "{{ nfsmount }}"
+#      loop_control:
+#       label: "{{ item.name }}"
+#      ignore_errors: yes
+        
+

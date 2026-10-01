@@ -1,0 +1,37 @@
+---
+ - name: create group
+   ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+   loop: "{{ oraclegroups }}"
+    
+ - name: create oracrs and oradb users
+   ansible.builtin.user:
+    name: "{{ item.name }}"
+    group: "{{ item.group }}"
+    groups: "{{ item.groups | default(omit) }}"
+    state: present
+    password: "{{ passwords [item.name] }}"
+   loop: "{{ users }}"
+   loop_control:
+    label: "{{ item.name }}"
+
+ - name: set password never expire
+   ansible.builtin.command:
+    cmd: "chage -m 0 -M 99999 -I -1 -E -1 {{ item }}"
+   loop:
+    - oracrs
+    - oradb
+   # - gcagent
+    
+ - name: umask value add in oracrs .bash_profile
+   lineinfile:
+    path: "/home/{{ item }}/.bash_profile"
+    line: "umask 0022"
+    insertafter: EOF
+    state: present
+   loop:
+    - oracrs
+    - oradb
+
+

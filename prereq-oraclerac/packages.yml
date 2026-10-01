@@ -1,0 +1,6 @@
+    - name: install required packages
+      yum:
+       name: "{{ item }}"
+       state: latest
+      loop: "{{ packages }}"
+      ignore_errors: yes

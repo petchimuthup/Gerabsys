@@ -1,0 +1,46 @@
+---
+lvm_mounts:
+  - name: d01
+    lv: lv_d01
+    vg: ol
+    #thinpool: pool00
+    size: 1g
+    fstype: xfs
+    fsdev: /dev/ol/lv_d01
+    path: /d01
+    owner: root
+    group: oinstall
+    mode: '0755'
+
+  - name: d02
+    lv: lv_d02
+    vg: ol
+    #thinpool: pool00
+    size: 1g
+    fstype: xfs
+    fsdev: /dev/ol/lv_d02
+    path: /d02
+    owner: oradb
+    group: oinstall
+    mode: '0775'
+
+#  - name: agent
+#    lv: lv_agent
+#    vg: ol
+#    thinpool: pool00
+#    size: 20g
+#    fstype: xfs
+#    fsdev: /dev/ol/lv_agent
+#    path: /agent
+#    owner: gcagent
+#    group: oinstall
+#    mode: '0755'
+#
+#nfsmount:
+#  - name: Patch
+#    path: /Patch
+#    src: 10.222.208.39/oracle_patch
+#    fstype: nfs
+
+    
+
