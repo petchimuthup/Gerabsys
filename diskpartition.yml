@@ -1,0 +1,26 @@
+---
+ - name: create disk partition
+   hosts: localhost
+   vars_files: vars/diskpartition.yml
+   tasks:
+    - name: diskpartition create
+      parted:
+        device: "{{ disk[0] }}"
+        number: 1
+        state: present
+        flags: [lvm]
+        part_type: primary
+        label: msdos
+
+    - name: create pv
+      shell: |
+       pvcreate "{{ pvs[0] }}"
+       vgextend ol "{{ pvs[0] }}"
+
+    - name: extend thin pool
+      lvol:
+        vg: ol
+        lv: pool00
+        size: +100%FREE
+        state: present
+       
