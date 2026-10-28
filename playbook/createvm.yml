@@ -1,0 +1,68 @@
+---
+ - name: create vm in olvm
+   hosts: engine
+   gather_facts: no
+   tasks:
+    - name: login to the olvm
+      ovirt.ovirt.ovirt_auth:
+        url: "{{ olvm_fqdn }}api"
+        username: "{{ olvm_user }}"
+        password: "{{ olvm_password }}"
+        ca_file: "{{ olvm_cafile }}"
+        insecure: "{{ olvm_insecure | default(true) }}"
+      tags: always
+    - name: create vm
+      ovirt.ovirt.ovirt_vm:
+        auth: "{{ ovirt_auth }}"
+        name: "{{ item }}"
+        template: "{{ olvm_template }}"
+        cluster: "{{ olvm_cluster }}"
+        memory: "{{ hostvars[item].vm_memory }}"
+        cpu_cores: "{{ hostvars[item].vm_cpu }}"
+        state: absent
+        wait: true
+        timeout: 600
+        nics:
+          - name: nic1
+            profile_name: "{{ vm_nic_profile }}"
+            interface: virtio
+        cloud_init:
+          host_name: "{{ item }}.{{ hostvars[item].vm_domain }}"
+          user_name: root
+          nic_name: "{{ hostvars[item].vm_nic_name }}"
+          nic_boot_protocol: static
+          nic_ip_address: "{{ hostvars[item].vm_ip }}"
+          nic_netmask: "{{ hostvars[item].vm_netmask }}"
+          nic_gateway: "{{ hostvars[item].vm_gateway }}"
+          dns_servers: "{{ hostvars[item].vm_dns }}"
+          dns_search: "{{ hostvars[item].vm_domain }}"
+        cloud_init_persist: true
+      loop: "{{ groups['newvms'] }}"
+
+    - name: logout from olvm
+      ovirt.ovirt.ovirt_auth:
+        state: absent
+        ovirt_auth: "{{ ovirt_auth }}"
+
+
+ - name: verify the newvms
+   hosts: newvms
+   tasks:
+    - name: wait for ssh
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+    - name: verify the hostname,ip,cpu,memory,dns
+      ansible.builtin.shell: |
+        hostnamectl --static
+        hostname -I
+        nproc
+        free -h | awk '/Mem:/ {print $2}'
+        grep nameserver /etc/resolv.conf
+      register: result
+      changed_when: false
+    
+    - name: show result
+      ansible.builtin.debug:
+        var: result.stdout_lines
+
+        

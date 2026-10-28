@@ -1,0 +1,21 @@
+# Define group with one host, which is the OLVM host (manager)
+[engine]
+localhost
+ 
+# Define the variables for the OLVM host, admin password will be
+# defined in password.yml
+[engine:vars]
+olvm_fqdn=https://enginevm.gssdxblab.com/ovirt-engine/
+olvm_user=admin@internal
+olvm_cafile=/etc/pki/ovirt-engine/ca.pem
+ 
+# Define the VMs you want to create on the OLV cluster
+[newvms]
+test01 ansible_host=192.168.220.51 vm_ip=192.168.220.51
+test02 ansible_host=192.168.220.52 vm_ip=192.168.220.52
+#test03 ansible_host=192.168.220.53 vm_ip=192.168.220.53
+
+[newvms:vars]
+ansible_user=gsslinux
+ansible_password=Root@123 
+ 

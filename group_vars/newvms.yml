@@ -1,0 +1,11 @@
+# Cloud init variables
+# Network
+vm_dns: "192.168.220.6 8.8.8.8"
+vm_domain: GSSDXBLAB.com
+vm_gateway: 192.168.220.1
+vm_netmask: 255.255.255.0
+vm_nic_name: enp1s0
+
+# Compute
+vm_memory: 4GiB
+vm_cpu: 2

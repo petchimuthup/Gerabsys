@@ -1,0 +1,10 @@
+---
+#Variables applicable to all vms
+#OLVM VM create details
+olvm_cluster: shecluster
+olvm_template: ol9template
+
+# Cloud init variables
+# Network
+vm_nic_profile: vmnet1
+
