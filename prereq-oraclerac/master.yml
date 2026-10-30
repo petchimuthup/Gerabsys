@@ -1,6 +1,6 @@
 ---
  - name: oracle rac prerequisite
-   hosts: rac_nodes
+   hosts: newvms
    vars_files: 
     - ../vars/psgroups.yml
     - ../vars/racdbpackages.yml

@@ -2,7 +2,7 @@
       lvol:
        vg: "{{ item.vg }}"
        lv: "{{ item.lv }}"
-       #thinpool: "{{ item.thinpool }}"
+       thinpool: "{{ item.thinpool }}"
        size: "{{ item.size }}"
        state: present
       loop: "{{ lvm_mounts }}"

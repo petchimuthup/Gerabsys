@@ -1,4 +1,4 @@
-# Define group with one host, which is the OLVM host (manager)
+# Communicate to olvm engine
 [engine]
 localhost
  
@@ -15,7 +15,4 @@ test01 ansible_host=192.168.220.51 vm_ip=192.168.220.51
 test02 ansible_host=192.168.220.52 vm_ip=192.168.220.52
 #test03 ansible_host=192.168.220.53 vm_ip=192.168.220.53
 
-[newvms:vars]
-ansible_user=gsslinux
-ansible_password=Root@123 
  

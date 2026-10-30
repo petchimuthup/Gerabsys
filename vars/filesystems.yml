@@ -3,7 +3,7 @@ lvm_mounts:
   - name: d01
     lv: lv_d01
     vg: ol
-    #thinpool: pool00
+    thinpool: pool00
     size: 1g
     fstype: xfs
     fsdev: /dev/ol/lv_d01
@@ -15,7 +15,7 @@ lvm_mounts:
   - name: d02
     lv: lv_d02
     vg: ol
-    #thinpool: pool00
+    thinpool: pool00
     size: 1g
     fstype: xfs
     fsdev: /dev/ol/lv_d02

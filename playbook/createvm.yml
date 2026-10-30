@@ -19,7 +19,7 @@
         cluster: "{{ olvm_cluster }}"
         memory: "{{ hostvars[item].vm_memory }}"
         cpu_cores: "{{ hostvars[item].vm_cpu }}"
-        state: absent
+        state: running
         wait: true
         timeout: 600
         nics:
@@ -36,6 +36,10 @@
           nic_gateway: "{{ hostvars[item].vm_gateway }}"
           dns_servers: "{{ hostvars[item].vm_dns }}"
           dns_search: "{{ hostvars[item].vm_domain }}"
+          custom_script: |
+            runcmd:
+              - sed -i 's/^BOOTPROTO=.*/BOOTPROTO=static/' /etc/sysconfig/network-scripts/ifcfg-{{ hostvars[item].vm_nic_name }}
+              - nmcli connection reload
         cloud_init_persist: true
       loop: "{{ groups['newvms'] }}"
 

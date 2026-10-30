@@ -1,10 +1,8 @@
 ---
  - packages:
-   # - oracle-ai-database-preinstall-26ai-1.0-3.el9.x86_64
-     - kmod-oracleasm-2.0.8-28.0.1.el7.x86_64
+    - oracle-ai-database-preinstall-26ai-1.0-3.el9.x86_64
+    #- kmod-oracleasm-2.0.8-28.0.1.el7.x86_64
     #- tigervnc-server.x86_64
     #- screen.x86_64
     #- nfs-utils
     #- rsync
-
-   
